@@ -69,15 +69,25 @@ const App = () => {
         number: newNumber,
       };
 
-      contactService.create(nameObject).then((returnedContact) => {
-        setPersons(persons.concat(returnedContact));
-        setNotificationMessage(`${nameObject.name} added to contacts`);
-        setTimeout(() => {
-          setNotificationMessage(null);
-        }, 5000);
-        setNewName("");
-        setNewNumber("");
-      });
+      contactService
+        .create(nameObject)
+        .then((returnedContact) => {
+          setPersons(persons.concat(returnedContact));
+          setNotificationMessage(`${nameObject.name} added to contacts`);
+          setTimeout(() => {
+            setNotificationMessage(null);
+          }, 5000);
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          setNotificationMessage(error.response.data.error);
+          setNotificationColor("red");
+          setTimeout(() => {
+            setNotificationColor("green");
+            setNotificationMessage(null);
+          }, 5000);
+        });
     }
   };
 
