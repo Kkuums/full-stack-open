@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://part3b-phonebook-backend.fly.dev',
+        target: 'https://bloglist-backend.fly.dev',
         changeOrigin: true,
       },
     },
