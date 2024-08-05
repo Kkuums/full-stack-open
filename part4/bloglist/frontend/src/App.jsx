@@ -56,6 +56,31 @@ const App = () => {
     setNewLikes(event.target.value)
   }
 
+  const handleDelete = async (id) => {
+    const blog = blogs.find((b) => b.id === id)
+
+    if (window.confirm(`Delete ${blog.title}?`)) {
+      await blogService.deleteBlog(id)
+      setBlogs(blogs.filter((b) => b.id !== id))
+    }
+  }
+
+  const handleIncreaseLikes = async (id) => {
+    const blog = blogs.find((b) => b.id === id)
+    const changedBlog = { ...blog, likes: blog.likes + 1 }
+
+    const updatedBlog = await blogService.update(id, changedBlog)
+    setBlogs(blogs.map((blog) => (blog.id !== id ? blog : updatedBlog)))
+  }
+
+  const handleDecreaseLikes = async (id) => {
+    const blog = blogs.find((b) => b.id === id)
+    const changedBlog = { ...blog, likes: blog.likes - 1 }
+
+    const updatedBlog = await blogService.update(id, changedBlog)
+    setBlogs(blogs.map((blog) => (blog.id !== id ? blog : updatedBlog)))
+  }
+
   return (
     <div>
       <h1>Bloglist</h1>
@@ -74,7 +99,12 @@ const App = () => {
       />
 
       <h2>Blog list</h2>
-      <BlogList blogs={blogs} />
+      <BlogList
+        blogs={blogs}
+        handleDelete={handleDelete}
+        handleIncreaseLikes={handleIncreaseLikes}
+        handleDecreaseLikes={handleDecreaseLikes}
+      />
     </div>
   )
 }

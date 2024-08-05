@@ -1,6 +1,11 @@
 import BlogListItem from './BlogListItem'
 
-const BlogList = ({ blogs }) => {
+const BlogList = ({
+  blogs,
+  handleDelete,
+  handleIncreaseLikes,
+  handleDecreaseLikes,
+}) => {
   return (
     <div>
       {blogs.map((blog) => (
@@ -10,6 +15,9 @@ const BlogList = ({ blogs }) => {
           author={blog.author}
           blogUrl={blog.url}
           likes={blog.likes}
+          handleDelete={() => handleDelete(blog.id)}
+          handleIncreaseLikes={() => handleIncreaseLikes(blog.id)}
+          handleDecreaseLikes={() => handleDecreaseLikes(blog.id)}
         />
       ))}
     </div>

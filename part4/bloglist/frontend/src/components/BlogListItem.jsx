@@ -1,6 +1,14 @@
 import './BlogListItem.css'
 
-const BlogListItem = ({ title, author, blogUrl, likes }) => {
+const BlogListItem = ({
+  title,
+  author,
+  blogUrl,
+  likes,
+  handleDelete,
+  handleIncreaseLikes,
+  handleDecreaseLikes,
+}) => {
   return (
     <div className='listItem'>
       <p>
@@ -14,7 +22,10 @@ const BlogListItem = ({ title, author, blogUrl, likes }) => {
       </p>
       <p>
         <strong>Likes</strong>: {likes}
+        <button onClick={handleDecreaseLikes}>-</button>
+        <button onClick={handleIncreaseLikes}>+</button>
       </p>
+      <button onClick={handleDelete}>Delete</button>
     </div>
   )
 }
