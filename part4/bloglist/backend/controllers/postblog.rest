@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJsb2dsaXN0X3VzZXIiLCJpZCI6IjY2YjNkMDVlMTQ4YmU2YzcxMjBkYzAyZSIsImlhdCI6MTcyMzMwNDUxMn0.nSj6PNkMDvzWr7mdeVp3R6Fgo2r6u-TmhJnsRqn7RrI
+
+{
+    "title": "blog post rest test",
+    "author": "rest",
+    "url": "localhost",
+    "likes": 10000,
+}
