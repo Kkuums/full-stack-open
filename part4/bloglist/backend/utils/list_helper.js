@@ -1,57 +1,60 @@
-const _ = require('lodash')
-
 const dummy = (blogs) => {
   return 1
 }
 
 const totalLikes = (blogs) => {
-  const sum = blogs.map((blog) => blog.likes).reduce((acc, curr) => acc + curr, 0)
-
-  return sum
+  return blogs.reduce((sum, blog) => sum + blog.likes, 0)
 }
 
 const favoriteBlog = (blogs) => {
-  const mostLiked = blogs.reduce(
-    (max, obj) => (obj.likes > max.likes ? obj : max),
-    blogs[0]
-  )
-
-  return {
-    title: mostLiked.title,
-    author: mostLiked.author,
-    likes: mostLiked.likes,
-  }
+  return blogs.reduce((max, blog) => (max.likes > blog.likes ? max : blog), {})
 }
 
 const mostBlogs = (blogs) => {
-  const groupedByAuthor = _.groupBy(blogs, 'author')
+  if (!blogs.length) {
+    return null
+  }
 
-  const blogCounts = _.map(groupedByAuthor, (authorBlogs, author) => ({
-    author,
-    blogs: authorBlogs.length,
-  }))
+  const authors = blogs.reduce((acc, blog) => {
+    acc[blog.author] = (acc[blog.author] || 0) + 1
+    return acc
+  }, {})
 
-  const mostBlogsAuthor = _.maxBy(blogCounts, 'blogs')
+  let maxAuthor = Object.keys(authors)[0]
+
+  for (const author in authors) {
+    if (authors[author] > authors[maxAuthor]) {
+      maxAuthor = author
+    }
+  }
 
   return {
-    author: mostBlogsAuthor.author,
-    blogs: mostBlogsAuthor.blogs,
+    author: maxAuthor,
+    blogs: authors[maxAuthor],
   }
 }
 
 const mostLikes = (blogs) => {
-  const groupedByAuthor = _.groupBy(blogs, 'author')
+  if (!blogs.length) {
+    return null
+  }
 
-  const likeCounts = _.map(groupedByAuthor, (authorBlogs, author) => ({
-    author,
-    likes: _.sumBy(authorBlogs, 'likes'),
-  }))
+  const authors = blogs.reduce((acc, blog) => {
+    acc[blog.author] = (acc[blog.author] || 0) + blog.likes
+    return acc
+  }, {})
 
-  const mostLikedAuthor = _.maxBy(likeCounts, 'likes')
+  let maxAuthor = Object.keys(authors)[0]
+
+  for (const author in authors) {
+    if (authors[author] > authors[maxAuthor]) {
+      maxAuthor = author
+    }
+  }
 
   return {
-    author: mostLikedAuthor.author,
-    likes: mostLikedAuthor.likes,
+    author: maxAuthor,
+    likes: authors[maxAuthor],
   }
 }
 
