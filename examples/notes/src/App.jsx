@@ -34,7 +34,6 @@ const App = () => {
     noteFormRef.current.toggleVisibility()
     noteService.create(noteObject).then((returnedNote) => {
       setNotes(notes.concat(returnedNote))
-      setNewNote('')
     })
   }
 
@@ -55,10 +54,6 @@ const App = () => {
       })
   }
 
-  const handleNoteChange = (event) => {
-    setNewNote(event.target.value)
-  }
-
   const notesToShow = showAll ? notes : notes.filter((note) => note.important)
 
   const loginForm = () => {
@@ -67,8 +62,6 @@ const App = () => {
         <LoginForm
           username={username}
           password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
           setErrorMessage={setErrorMessage}
           setUser={setUser}
           setUsername={setUsername}
@@ -83,7 +76,7 @@ const App = () => {
   const noteForm = () => {
     return (
       <Togglable buttonLabel='new note' ref={noteFormRef}>
-        <NoteForm onSubmit={addNote} handleChange={handleNoteChange} />
+        <NoteForm onSubmit={addNote} />
       </Togglable>
     )
   }

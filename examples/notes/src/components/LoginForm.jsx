@@ -1,9 +1,8 @@
 import loginService from '../services/login'
 import noteService from '../services/notes'
+import PropTypes from 'prop-types'
 
 const LoginForm = ({
-  handleUsernameChange,
-  handlePasswordChange,
   username,
   password,
   setErrorMessage,
@@ -38,7 +37,11 @@ const LoginForm = ({
       <form onSubmit={handleLogin}>
         <div>
           username
-          <input type='text' value={username} onChange={handleUsernameChange} />
+          <input
+            type='text'
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
+          />
         </div>
 
         <div>
@@ -46,13 +49,20 @@ const LoginForm = ({
           <input
             type='password'
             value={password}
-            onChange={handlePasswordChange}
+            onChange={({ target }) => setPassword(target.value)}
           />
         </div>
         <button type='submit'>login</button>
       </form>
     </div>
   )
+}
+
+LoginForm.propTypes = {
+  handleUsernameChange: PropTypes.func.isRequired,
+  handlePasswordChange: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  password: PropTypes.string.isRequired,
 }
 
 export default LoginForm

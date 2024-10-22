@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import loginService from './services/login'
 import AddBlogForm from './components/AddBlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,10 +13,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newBlogUrl, setNewBlogUrl] = useState('')
 
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationColor, setNotificationColor] = useState('green')
@@ -33,15 +30,8 @@ const App = () => {
     }
   }, [])
 
-  const addBlog = (event) => {
-    event.preventDefault()
-
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newBlogUrl,
-    }
-
+  const addBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then((returnedBlog) => {
       setBlogs(blogs.concat(returnedBlog))
 
@@ -51,33 +41,7 @@ const App = () => {
       setTimeout(() => {
         setNotificationMessage(null)
       }, 5000)
-
-      setNewTitle('')
-      setNewAuthor('')
-      setNewBlogUrl('')
     })
-  }
-
-  const handleLogin = async (event) => {
-    event.preventDefault()
-
-    try {
-      const user = await loginService.login({ username, password })
-
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (exception) {
-      setNotificationMessage('Wrong credentials')
-      setNotificationColor('red')
-      setTimeout(() => {
-        setNotificationMessage(null)
-        setNotificationColor('green')
-      }, 5000)
-    }
   }
 
   const handleLogout = (event) => {
@@ -87,17 +51,24 @@ const App = () => {
     window.localStorage.clear()
   }
 
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value)
+  const handleBlogLike = async (id) => {
+    const blog = blogs.find((b) => b.id === id)
+    const changedBlog = { ...blog, likes: blog.likes + 1 }
+
+    const updatedBlog = await blogService.update(id, changedBlog)
+    setBlogs(blogs.map((blog) => (blog.id !== id ? blog : updatedBlog)))
   }
 
-  const handleAuthorChange = (event) => {
-    setNewAuthor(event.target.value)
+  const handleDelete = async (id) => {
+    const blog = blogs.find((b) => b.id === id)
+
+    if (window.confirm(`Delete ${blog.title} by ${blog.author}?`)) {
+      await blogService.deleteBlog(id)
+      setBlogs(blogs.filter((b) => b.id !== id))
+    }
   }
 
-  const handleBlogUrlChange = (event) => {
-    setNewBlogUrl(event.target.value)
-  }
+  const blogFormRef = useRef()
 
   return (
     <>
@@ -115,7 +86,9 @@ const App = () => {
             password={password}
             setUsername={setUsername}
             setPassword={setPassword}
-            handleLogin={handleLogin}
+            setUser={setUser}
+            setNotificationMessage={setNotificationMessage}
+            setNotificationColor={setNotificationColor}
           />
         </div>
       ) : (
@@ -125,19 +98,21 @@ const App = () => {
           </h3>
 
           <h2>create new</h2>
-          <AddBlogForm
-            addBlog={addBlog}
-            newTitle={newTitle}
-            newAuthor={newAuthor}
-            newBlogUrl={newBlogUrl}
-            handleTitleChange={handleTitleChange}
-            handleAuthorChange={handleAuthorChange}
-            handleBlogUrlChange={handleBlogUrlChange}
-          />
+          <Togglable buttonLabel='new blog' ref={blogFormRef}>
+            <AddBlogForm createBlog={addBlog} />
+          </Togglable>
 
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
-          ))}
+          {blogs
+            .sort((a, b) => b.likes - a.likes)
+            .map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                handleBlogLike={handleBlogLike}
+                handleDelete={handleDelete}
+                user={user}
+              />
+            ))}
         </div>
       )}
     </>
