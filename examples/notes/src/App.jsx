@@ -76,7 +76,7 @@ const App = () => {
   const noteForm = () => {
     return (
       <Togglable buttonLabel='new note' ref={noteFormRef}>
-        <NoteForm onSubmit={addNote} />
+        <NoteForm createNote={addNote} />
       </Togglable>
     )
   }
