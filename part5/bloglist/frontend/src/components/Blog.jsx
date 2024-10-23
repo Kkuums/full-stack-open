@@ -16,7 +16,7 @@ const Blog = ({ blog, handleBlogLike, handleDelete, user }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       {blog.title} {showDetails ? '' : blog.author}
       <button onClick={toggleShowDetails}>{showDetails ? 'hide' : 'view'}</button>
       {showDetails && (
