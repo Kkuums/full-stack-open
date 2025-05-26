@@ -34,7 +34,7 @@ const Authors = (props) => {
         </tbody>
       </table>
 
-      <BornForm />
+      {props.token ? <BornForm /> : ''}
     </div>
   )
 }
